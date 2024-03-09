@@ -18,6 +18,10 @@ namespace ldr {
             return iterator(&_GetTeb()->ProcessEnvironmentBlock->Ldr->InMemoryOrderModuleList);
         }
 
+        const LDR_DATA_TABLE_ENTRY* get() {
+            return CONTAINING_RECORD(_Entry, LDR_DATA_TABLE_ENTRY, InMemoryOrderLinks);
+        }
+
         iterator& operator++() {
             _Entry = _Entry->Flink;
             return *this;
@@ -32,7 +36,7 @@ namespace ldr {
         }
 
         const LDR_DATA_TABLE_ENTRY* operator->() {
-            return CONTAINING_RECORD(_Entry, LDR_DATA_TABLE_ENTRY, InMemoryOrderLinks);
+            return get();
         }
 
     private:
@@ -52,16 +56,14 @@ namespace ldr {
         for (auto& e : _LcTargetName) { 
             e = ::tolower(e); 
         };
-        for (auto& _Module : iterator(0)) {
-            std::wstring _LcThisName(_Module.FullDllName.Buffer);
+        for (auto it = iterator::begin(); it != iterator::end(); ++it) {
+            std::wstring _LcThisName(it->FullDllName.Buffer);
             for (auto& e : _LcThisName) { 
                 e = ::tolower(e); 
             };
-            if (_LcTargetName == _LcThisName)
-                return &_Module;
             std::wstring_view _LcThisFileName(_LcThisName.begin() + _LcThisName.find_last_of('\\') + 1, _LcThisName.end());
-            if (_LcTargetName == _LcThisFileName)
-                return &_Module;
+            if (_LcTargetName == _LcThisName || _LcTargetName == _LcThisFileName)
+                return it.get();
         }
         return nullptr;
     }
