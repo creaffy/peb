@@ -52,7 +52,7 @@ namespace ldr {
         for (auto& e : _LcTargetName) { 
             e = ::tolower(e); 
         };
-        for (auto& _Module : iterator::begin()) {
+        for (auto& _Module : iterator(0)) {
             std::wstring _LcThisName(_Module.FullDllName.Buffer);
             for (auto& e : _LcThisName) { 
                 e = ::tolower(e); 
