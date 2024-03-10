@@ -6,6 +6,10 @@
 namespace ldr {
     class iterator {
     public:
+        iterator()
+            : _Entry(0) {
+        }
+
         iterator(LIST_ENTRY* Ptr)
             : _Entry(Ptr) {
         }
@@ -53,13 +57,13 @@ namespace ldr {
 
     const LDR_DATA_TABLE_ENTRY* get_module(const std::string_view ModuleName) {
         std::wstring _LcTargetName(ModuleName.begin(), ModuleName.end());
-        for (auto& e : _LcTargetName) { 
-            e = ::tolower(e); 
+        for (auto& e : _LcTargetName) {
+            e = ::tolower(e);
         };
         for (auto it = iterator::begin(); it != iterator::end(); ++it) {
             std::wstring _LcThisName(it->FullDllName.Buffer);
-            for (auto& e : _LcThisName) { 
-                e = ::tolower(e); 
+            for (auto& e : _LcThisName) {
+                e = ::tolower(e);
             };
             std::wstring_view _LcThisFileName(_LcThisName.begin() + _LcThisName.find_last_of('\\') + 1, _LcThisName.end());
             if (_LcTargetName == _LcThisName || _LcTargetName == _LcThisFileName)
